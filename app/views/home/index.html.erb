@@ -33,11 +33,24 @@
 					</tr>
 				</thead>
 				<tbody>
-					<% 6.times do %>
+<script>
+function read_data(){
+$.getJSON( "/usbinterface/common", function( data ) {
+  $("#light_value").html(data['light']);
+    $('.dial')
+        .val(data['light'])
+        .trigger('change');
+  read_data();
+});
+}
+setInterval(function(){read_data()}, 1500);
+</script>
+<% @data = read_common %>
+					<% @data.each do |d| %>
 						<tr>
-							<td><%= ["LIGHT","DIM","TEMP"].sample %></td>
-							<td class="text-right">
-								<%= (Random.rand * 20).round(2).to_s %>
+							<td><%= d.first.to_s %></td>
+						<td class="text-right" id="light_value">
+								<%= d.second.to_s %>
 							</td>
 							<td class="text-right">
 								<span class="actions">
@@ -103,51 +116,10 @@
 <div class="panel panel-default">
 	<div class="panel-body">
 		Knobby:
-		<input type="text" value="<%= (Random.rand * 20).round(1).to_s %>" class="dial">
-		<input type="text" value="<%= (Random.rand * 20).round(1).to_s %>" class="dial">
-		<input type="text" value="<%= (Random.rand * 20).round(1).to_s %>" class="dial">
-		<input type="text" value="<%= (Random.rand * 20).round(1).to_s %>" class="dial">
-		<input type="text" value="<%= (Random.rand * 20).round(1).to_s %>" class="dial">
-
-		<script>
-		$(".dial").knob({
-		    'min':0,
-		    'max':20,
-		    'angleOffset': 180,
-		    'skin': 'tron',
-		    'fgColor': '#ffec03',
-		    'width': "120",
-		    'readOnly': true,
-		    draw : function () {
-            // "tron" case
-            if(!this.$.data('skin') == 'tron') {
-                this.cursorExt = 0.3;
-                var a = this.arc(this.cv)  // Arc
-                    , pa                   // Previous arc
-                    , r = 1;
-                this.g.lineWidth = this.lineWidth;
-                if (this.o.displayPrevious) {
-                    pa = this.arc(this.v);
-                    this.g.beginPath();
-                    this.g.strokeStyle = this.pColor;
-                    this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, pa.s, pa.e, pa.d);
-                    this.g.stroke();
-                }
-                this.g.beginPath();
-                this.g.strokeStyle = r ? this.o.fgColor : this.fgColor ;
-                this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, a.s, a.e, a.d);
-                this.g.stroke();
-                this.g.lineWidth = 2;
-                this.g.beginPath();
-                this.g.strokeStyle = this.o.fgColor;
-                this.g.arc( this.xy, this.xy, this.radius - this.lineWidth + 1 + this.lineWidth * 2 / 3, 0, 2 * Math.PI, false);
-                this.g.stroke();
-                return false;
-            }}
-		});
-		</script>
+		<input type="text" value="<%= (Random.rand * 20).round(1).to_s %>" class="dial" class="light_value">
 	</div>
 </div>
+<!--
 <hr />
 
 <div class="alert alert-success">
@@ -366,4 +338,42 @@
 
 <small><a href="#wrapper">[top]</a></small>
 <!-- End of Sample Content -->
+-->
 </div>
+		<script>
+		$(".dial").knob({
+		    'min':0,
+		    'max':125,
+		    'angleOffset': 180,
+		    'skin': 'tron',
+		    'fgColor': '#ffec03',
+		    'width': "120",
+		    'readOnly': true,
+		    draw : function () {
+            // "tron" case
+            if(!this.$.data('skin') == 'tron') {
+                this.cursorExt = 0.3;
+                var a = this.arc(this.cv)  // Arc
+                    , pa                   // Previous arc
+                    , r = 1;
+                this.g.lineWidth = this.lineWidth;
+                if (this.o.displayPrevious) {
+                    pa = this.arc(this.v);
+                    this.g.beginPath();
+                    this.g.strokeStyle = this.pColor;
+                    this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, pa.s, pa.e, pa.d);
+                    this.g.stroke();
+                }
+                this.g.beginPath();
+                this.g.strokeStyle = r ? this.o.fgColor : this.fgColor ;
+                this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, a.s, a.e, a.d);
+                this.g.stroke();
+                this.g.lineWidth = 2;
+                this.g.beginPath();
+                this.g.strokeStyle = this.o.fgColor;
+                this.g.arc( this.xy, this.xy, this.radius - this.lineWidth + 1 + this.lineWidth * 2 / 3, 0, 2 * Math.PI, false);
+                this.g.stroke();
+                return false;
+            }}
+		});
+		</script>
